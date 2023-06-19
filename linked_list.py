@@ -8,6 +8,16 @@ class LinkedList:
         self.head = None
         self.last_node = None
 
+    def to_list(self):
+        l = []
+        if self.head is None:
+            return l
+        node = self.head
+        while node:
+          l.append(node.data)
+          node = node.next_node
+        return l
+
     def print_ll(self):
         ll_string = ""
         node = self.head
@@ -30,29 +40,6 @@ class LinkedList:
     def insert_end(self, data):
         if self.head is None:
             self.insert_beginning(data)
-        
-        # no longer needed because of checking at insert_beginning
-        # if self.last_node is None:
-        #     node = self.head
-        #     while node.next_node:
-        #         print(f"iter {data}")
-        #         node = node.next_node
-        #     node.next_node = Node(data, None)
-        #     self.last_node = node.next_node
-        # else:
-            self.last_node.next_node = Node(data, None)
-            self.last_node = self.last_node.next_node
-
-
-
-ll = LinkedList()
-ll.insert_beginning("data")
-ll.insert_beginning("not_data")
-ll.insert_beginning("data")
-ll.insert_beginning("not_data")
-ll.insert_beginning("data")
-ll.insert_beginning("not_data")
-
-ll.insert_end("the_end")
-ll.insert_end("the_end_for_real")
-ll.print_ll()
+            return
+        self.last_node.next_node = Node(data, None)
+        self.last_node = self.last_node.next_node

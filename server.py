@@ -4,11 +4,13 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import linked_list
 #app
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sqlitedb.file"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
+
 
 #configure sqllite3 to enforce foreign key constraints
 event.listens_for(Engine, 'connect')
@@ -19,7 +21,10 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 db = SQLAlchemy(app)
-app.app_context().push()
+with app.app_context():
+  db.create_all()
+  # app.app_context().push()
+  app.app_context()
 now = datetime.now()
 
 #models
@@ -58,7 +63,19 @@ def create_user():
 
 @app.route('/user/descending_id', methods=["GET"])
 def get_all_users_descending():
-  pass
+  users = User.query.all()
+  all_users_ll = linked_list.LinkedList()
+  for user in users:
+    all_users_ll.insert_beginning(
+      {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "address": user.address,
+        "phone": user.phone
+      }
+    )
+    return jsonify(all_users_ll.to_list()), 200
 
 @app.route('/user/ascending_id', methods=["GET"])
 def get_all_users_ascending():
